@@ -123,6 +123,13 @@ __attribute__((noinline)) void show_register_fpr(CPULoongArchState *env) {
     dump_fcsr(env->fcsr0);
 }
 
+__attribute__((noinline)) void show_register_lsx(CPULoongArchState *env) {
+    for (int i = 0; i < 32; i++) {
+        fprintf(stderr, "f%02d  0x%08x 0x%08x 0x%08x 0x%08x\n", i,
+             env->fpr[i].vreg.W[3], env->fpr[i].vreg.W[2], env->fpr[i].vreg.W[1], env->fpr[i].vreg.W[0]);
+    }
+}
+
 static void show_csr(CPULoongArchState *env) {
     fprintf(stderr,"CSR_CRMD\t:0x%-16lx ",env->CSR_CRMD);
     fprintf(stderr,"CSR_PRMD\t:0x%-16lx ",env->CSR_PRMD);
@@ -322,6 +329,8 @@ static int debug_handle_info(const char* str) {
         show_breakpoints();
     } else if (strcmp(buf, "tlb") == 0) {
         show_tlb(current_env);
+    } else if (strcmp(buf, "lsx") == 0) {
+        show_register_lsx(current_env);
     } else {
         return -1;
     }
